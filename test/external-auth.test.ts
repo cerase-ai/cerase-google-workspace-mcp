@@ -344,14 +344,14 @@ test('authenticate uses external token when no service account', withEnv(
 test('describeBypassedTokens returns null when no local token file exists', withEnv(
   { GOOGLE_APPLICATION_CREDENTIALS: '/x/sa.json' },
   () => {
-    assert.equal(describeBypassedTokens('service_account', '/home/u/tokens.json', false), null);
+    assert.equal(describeBypassedTokens('service_account', '/x/tokens.json', false), null);
   },
 ));
 
 test('describeBypassedTokens names only the one set override var', withEnv(
   { GOOGLE_APPLICATION_CREDENTIALS: '/x/sa.json' },
   () => {
-    const msg = describeBypassedTokens('service_account', '/home/u/tokens.json', true);
+    const msg = describeBypassedTokens('service_account', '/x/tokens.json', true);
     assert.ok(msg);
     assert.ok(msg!.includes('Unset GOOGLE_APPLICATION_CREDENTIALS to use your authenticated Google account'));
     assert.ok(!msg!.includes('GOOGLE_DRIVE_MCP_ACCESS_TOKEN'), 'does not mention an unset override var');
@@ -363,7 +363,7 @@ test('describeBypassedTokens tells the user to unset BOTH override vars when bot
   () => {
     // Unsetting only the winning var just hands control to the other override,
     // so tokens.json stays bypassed — the remedy must name both.
-    const msg = describeBypassedTokens('service_account', '/home/u/tokens.json', true);
+    const msg = describeBypassedTokens('service_account', '/x/tokens.json', true);
     assert.ok(msg);
     assert.ok(
       msg!.includes('Unset GOOGLE_APPLICATION_CREDENTIALS and GOOGLE_DRIVE_MCP_ACCESS_TOKEN'),

@@ -60,7 +60,7 @@ function paddedInitialize(bytes: number): string {
     jsonrpc: '2.0',
     method: 'initialize',
     params: {
-      protocolVersion: '2025-03-26',
+      protocolVersion: '2025-06-18',
       capabilities: {},
       clientInfo: { name: 'test', version: '1.0.0', pad: '' },
       _meta: { pad: '' },

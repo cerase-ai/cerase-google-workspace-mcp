@@ -58,7 +58,7 @@ async function initializeSession(baseUrl: string): Promise<string> {
     body: JSON.stringify({
       jsonrpc: '2.0',
       method: 'initialize',
-      params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
       id: 1,
     }),
   });
@@ -116,7 +116,7 @@ describe('HTTP transport', () => {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'initialize',
-        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
         id: 1,
       }),
     });
@@ -141,7 +141,7 @@ describe('HTTP transport', () => {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'initialize',
-        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
         id: 1,
       }),
     });
@@ -209,7 +209,7 @@ describe('HTTP transport', () => {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'initialize',
-        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
         id: 1,
       }),
     });
@@ -368,7 +368,7 @@ describe('HTTP transport — session idle timeout', () => {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'initialize',
-        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test-client', version: '1.0.0' } },
         id: 1,
       }),
     });
@@ -541,7 +541,7 @@ describe('HTTP transport — DNS rebinding protection', () => {
     const body = JSON.stringify({
       jsonrpc: '2.0',
       method: 'initialize',
-      params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } },
+      params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } },
       id: 1,
     });
     const status = await new Promise<number>((resolve, reject) => {
@@ -574,7 +574,7 @@ describe('HTTP transport — DNS rebinding protection', () => {
       body: JSON.stringify({
         jsonrpc: '2.0',
         method: 'initialize',
-        params: { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } },
+        params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } },
         id: 1,
       }),
     });
