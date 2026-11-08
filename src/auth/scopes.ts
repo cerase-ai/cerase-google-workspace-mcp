@@ -11,6 +11,9 @@ export const SCOPE_ALIASES: Record<string, string> = {
   presentations: 'https://www.googleapis.com/auth/presentations',
   calendar: 'https://www.googleapis.com/auth/calendar',
   'calendar.events': 'https://www.googleapis.com/auth/calendar.events',
+  'forms.body': 'https://www.googleapis.com/auth/forms.body',
+  'forms.body.readonly': 'https://www.googleapis.com/auth/forms.body.readonly',
+  'forms.responses.readonly': 'https://www.googleapis.com/auth/forms.responses.readonly',
 };
 
 export const SCOPE_PRESETS: Record<string, string[]> = {

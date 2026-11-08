@@ -4,6 +4,7 @@ import test from 'node:test';
 import * as driveTools from '../../src/tools/drive.js';
 import * as docsTools from '../../src/tools/docs.js';
 import * as suggestionsTools from '../../src/tools/suggestions.js';
+import * as formsTools from '../../src/tools/forms.js';
 import * as sheetsTools from '../../src/tools/sheets.js';
 import * as slidesTools from '../../src/tools/slides.js';
 import * as calendarTools from '../../src/tools/calendar.js';
@@ -22,6 +23,7 @@ const registeredToolNames: string[] = [
   driveTools,
   docsTools,
   suggestionsTools,
+  formsTools,
   sheetsTools,
   slidesTools,
   calendarTools,

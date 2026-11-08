@@ -8,8 +8,8 @@
   "responderUri": "https://docs.google.com/forms/d/e/1FAIpQLSdNuovoModulo2026/viewform",
   "publishSettings": {
     "publishState": {
-      "isPublished": false,
-      "isAcceptingResponses": false
+      "isPublished": true,
+      "isAcceptingResponses": true
     }
   },
   "items": []

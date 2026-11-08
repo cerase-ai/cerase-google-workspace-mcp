@@ -4,7 +4,7 @@
   "name": "google-workspace",
   "type": "connector",
   "display_name": "Google Workspace",
-  "description": "Your own Google account's Drive, Calendar, Docs, Sheets and Slides through one connection.",
+  "description": "Your own Google account's Drive, Calendar, Docs, Sheets, Slides and Forms through one connection.",
   "license": "MIT",
   "install": {
     "command": "node /opt/cerase-google-workspace-mcp/dist/index.js"
@@ -20,7 +20,9 @@
       "https://www.googleapis.com/auth/spreadsheets",
       "https://www.googleapis.com/auth/presentations",
       "openid",
-      "email"
+      "email",
+      "https://www.googleapis.com/auth/forms.body",
+      "https://www.googleapis.com/auth/forms.responses.readonly"
     ]
   },
   "tool_side_effects": {
@@ -36,6 +38,7 @@
       "getCalendarEvents",
       "getComment",
       "getDocumentInfo",
+      "getForm",
       "getGoogleDocContent",
       "getGoogleDocContentPaginated",
       "getGoogleDocImage",
@@ -50,8 +53,10 @@
       "listCalendars",
       "listComments",
       "listDimensionGroups",
+      "listDocCommentsAndSuggestions",
       "listDocumentTabs",
       "listFolder",
+      "listFormResponses",
       "listGoogleDocs",
       "listGoogleSheets",
       "listPermissions",
@@ -71,7 +76,8 @@
       "deleteRange",
       "deleteSheet",
       "deleteSlideElement",
-      "removePermission"
+      "removePermission",
+      "deleteFormQuestion"
     ]
   }
 }

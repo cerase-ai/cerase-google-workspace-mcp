@@ -1,6 +1,6 @@
 # Tool reference
 
-This server exposes 136 MCP tools across Google Drive, Docs, Sheets, Slides, and Calendar. Tool availability can depend on the granted OAuth scopes. Unless noted otherwise, every tool also accepts the optional top-level `account` parameter described in [Authentication](authentication.md#per-tool-account-selection).
+This server exposes 142 MCP tools across Google Drive, Docs, Sheets, Slides, Calendar, and Forms. Tool availability can depend on the granted OAuth scopes. Unless noted otherwise, every tool also accepts the optional top-level `account` parameter described in [Authentication](authentication.md#per-tool-account-selection).
 
 ## Available Tools
 
@@ -816,6 +816,45 @@ different identifiers; neither is accepted as a lock.
   - `eventId`: Event ID
   - `calendarId`: Calendar ID (optional, default: primary)
   - `sendUpdates`: Send cancellation notifications (optional, default: none)
+
+### Google Forms
+- **createForm** - Create a Google Form. Google creates the form published and accepting responses as soon as it exists
+  - `title`: Form title
+  - `documentTitle`: Title of the linked Google Drive document (optional)
+  - `description`: Form description, written in a second update after creation (optional)
+
+- **getForm** - Read a form's title, description, responder link, publish state, and every item in order with its position, item ID, kind, question ID, options, and required flag
+  - `formId`: Form ID
+
+- **addFormQuestion** - Add a question to a form. `questionType` is one of `SHORT_ANSWER`, `PARAGRAPH`, `MULTIPLE_CHOICE`, `CHECKBOXES`, `DROPDOWN`, `SCALE`, `DATE`, or `TIME`
+  - `formId`: Form ID
+  - `title`: Question title
+  - `questionType`: Question kind
+  - `required`: Whether the question must be answered (optional, default false)
+  - `description`: Question description (optional)
+  - `options`: Choices for `MULTIPLE_CHOICE`, `CHECKBOXES`, or `DROPDOWN` (required for those kinds, unique, and rejected on other kinds)
+  - `index`: Position to insert at, from 0 to the item count (optional, default appends)
+  - `low`, `high`: Lowest and highest values for `SCALE` (both required for that kind, low below high)
+  - `lowLabel`, `highLabel`: Labels for the ends of a `SCALE` (optional)
+  - `includeTime`, `includeYear`: Whether a `DATE` question includes the time or the year (optional)
+  - `duration`: `true` for an elapsed time, otherwise a time of day, for `TIME` only (optional)
+
+- **updateFormQuestion** - Update a question by its item ID: title, description, required flag, or the options of a choice question
+  - `formId`: Form ID
+  - `formItemId`: Item ID from `getForm`
+  - `title`: New title (optional)
+  - `description`: New description (optional)
+  - `required`: New required flag, for a question (optional)
+  - `options`: New choices for a choice question (optional)
+
+- **deleteFormQuestion** - Delete a question by its item ID
+  - `formId`: Form ID
+  - `formItemId`: Item ID from `getForm`
+
+- **listFormResponses** - List responses under their question titles, with response ID, submission time, respondent email, and answers
+  - `formId`: Form ID
+  - `pageSize`: Number of responses to return (optional)
+  - `pageToken`: Token for the next page, from a previous response (optional)
 
 ### Account Management
 

@@ -35,7 +35,7 @@ export GOOGLE_DRIVE_MCP_SCOPES="drive.readonly,documents,spreadsheets"
 Notes:
 - Comma-separated list.
 - Values can be full scope URLs or short aliases:
-  `drive`, `drive.file`, `drive.readonly`, `documents`, `spreadsheets`, `presentations`, `calendar`, `calendar.events`.
+  `drive`, `drive.file`, `drive.readonly`, `documents`, `spreadsheets`, `presentations`, `calendar`, `calendar.events`, `forms.body`, `forms.body.readonly`, `forms.responses.readonly`.
 - Changing scopes usually requires re-authentication.
 
 ### Auth Server Port Configuration

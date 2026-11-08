@@ -28,6 +28,9 @@ const PRESENTATIONS = 'https://www.googleapis.com/auth/presentations';
 const CALENDAR = 'https://www.googleapis.com/auth/calendar';
 const CALENDAR_EVENTS = 'https://www.googleapis.com/auth/calendar.events';
 const CALENDAR_READONLY = 'https://www.googleapis.com/auth/calendar.readonly';
+const FORMS_BODY = 'https://www.googleapis.com/auth/forms.body';
+const FORMS_BODY_READONLY = 'https://www.googleapis.com/auth/forms.body.readonly';
+const FORMS_RESPONSES_READONLY = 'https://www.googleapis.com/auth/forms.responses.readonly';
 
 const DRIVE_READ_SCOPES = [DRIVE_READONLY, DRIVE_FILE, DRIVE];
 const DRIVE_WRITE_SCOPES = [DRIVE_FILE, DRIVE];
@@ -200,6 +203,14 @@ export const TOOL_META: Record<string, ToolMeta> = {
   createCalendarEvent: write(CAL_WRITE_SCOPES),
   updateCalendarEvent: write(CAL_WRITE_SCOPES),
   deleteCalendarEvent: write(CAL_WRITE_SCOPES),
+
+  // ---- Forms ----
+  createForm: write([FORMS_BODY, DRIVE_FILE, DRIVE]),
+  getForm: read([FORMS_BODY_READONLY, FORMS_BODY, DRIVE_READONLY, DRIVE_FILE, DRIVE]),
+  addFormQuestion: write([FORMS_BODY, DRIVE_FILE, DRIVE]),
+  updateFormQuestion: write([FORMS_BODY, DRIVE_FILE, DRIVE]),
+  deleteFormQuestion: write([FORMS_BODY, DRIVE_FILE, DRIVE]),
+  listFormResponses: read([FORMS_RESPONSES_READONLY, DRIVE_FILE, DRIVE]),
 
   // ---- Admin ----
   manage_accounts: admin,
