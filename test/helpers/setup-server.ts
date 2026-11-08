@@ -37,6 +37,7 @@ export async function setupTestServer(): Promise<TestContext> {
   (google as any).sheets = mocks.google.sheets;
   (google as any).slides = mocks.google.slides;
   (google as any).calendar = mocks.google.calendar;
+  (google as any).forms = mocks.google.forms;
 
   // Import the server module (only once)
   if (!_serverModule) {

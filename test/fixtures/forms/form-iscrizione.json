@@ -1,0 +1,70 @@
+{
+  "formId": "1FAIpQLSdIscrizioneCorso2026",
+  "info": {
+    "title": "Iscrizione al corso",
+    "description": "Compila il modulo per iscriverti al corso di formazione.",
+    "documentTitle": "Iscrizione al corso"
+  },
+  "revisionId": "0000004a",
+  "responderUri": "https://docs.google.com/forms/d/e/1FAIpQLSdIscrizioneCorso2026/viewform",
+  "publishSettings": {
+    "publishState": {
+      "isPublished": true,
+      "isAcceptingResponses": true
+    }
+  },
+  "items": [
+    {
+      "itemId": "2a1b3c4d",
+      "title": "Nome e cognome",
+      "questionItem": {
+        "question": {
+          "questionId": "4f8a1c2d",
+          "required": true,
+          "textQuestion": {
+            "paragraph": false
+          }
+        }
+      }
+    },
+    {
+      "itemId": "5e6f7a8b",
+      "title": "Sezione 2",
+      "pageBreakItem": {}
+    },
+    {
+      "itemId": "9c0d1e2f",
+      "title": "Turno",
+      "questionItem": {
+        "question": {
+          "questionId": "7b3e9d10",
+          "required": false,
+          "choiceQuestion": {
+            "type": "RADIO",
+            "options": [
+              {
+                "value": "Mattina"
+              },
+              {
+                "value": "Pomeriggio"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "itemId": "3a4b5c6d",
+      "title": "Note",
+      "questionItem": {
+        "question": {
+          "questionId": "9c2a4e6f",
+          "required": false,
+          "textQuestion": {
+            "paragraph": true
+          }
+        }
+      }
+    }
+  ]
+}

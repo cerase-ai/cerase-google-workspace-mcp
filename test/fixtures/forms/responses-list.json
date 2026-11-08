@@ -1,0 +1,80 @@
+{
+  "responses": [
+    {
+      "responseId": "2_1FAIpQLSdIscrizioneCorso2026_risposta1",
+      "createTime": "2026-02-10T09:15:00.000Z",
+      "lastSubmittedTime": "2026-02-10T09:15:00.000Z",
+      "answers": {
+        "4f8a1c2d": {
+          "questionId": "4f8a1c2d",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Giulia Bianchi"
+              }
+            ]
+          }
+        },
+        "7b3e9d10": {
+          "questionId": "7b3e9d10",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Mattina"
+              }
+            ]
+          }
+        },
+        "9c2a4e6f": {
+          "questionId": "9c2a4e6f",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Nessuna nota"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "responseId": "2_1FAIpQLSdIscrizioneCorso2026_risposta2",
+      "createTime": "2026-02-11T14:02:00.000Z",
+      "lastSubmittedTime": "2026-02-11T14:02:00.000Z",
+      "respondentEmail": "marco.rossi@example.com",
+      "answers": {
+        "4f8a1c2d": {
+          "questionId": "4f8a1c2d",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Marco Rossi"
+              }
+            ]
+          }
+        },
+        "7b3e9d10": {
+          "questionId": "7b3e9d10",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Pomeriggio"
+              }
+            ]
+          }
+        },
+        "9c2a4e6f": {
+          "questionId": "9c2a4e6f",
+          "textAnswers": {
+            "answers": [
+              {
+                "value": "Ho già seguito un corso simile."
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "nextPageToken": "Cg0IARABGAAgAA"
+}

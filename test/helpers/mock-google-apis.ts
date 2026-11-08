@@ -283,6 +283,35 @@ export function createCalendarMock() {
 }
 
 // ---------------------------------------------------------------------------
+// Forms mock
+// ---------------------------------------------------------------------------
+export function createFormsMock() {
+  const tracker = new CallTracker();
+  const forms = {
+    create: stub(tracker, 'forms.create', {
+      formId: 'form-1',
+      info: { title: 'Test Form', documentTitle: 'Test Form' },
+      revisionId: 'rev-1',
+      responderUri: 'https://docs.google.com/forms/d/form-1/viewform',
+      publishSettings: { publishState: { isPublished: false, isAcceptingResponses: false } },
+    }),
+    get: stub(tracker, 'forms.get', {
+      formId: 'form-1',
+      info: { title: 'Test Form', description: '', documentTitle: 'Test Form' },
+      revisionId: 'rev-1',
+      responderUri: 'https://docs.google.com/forms/d/form-1/viewform',
+      publishSettings: { publishState: { isPublished: false, isAcceptingResponses: false } },
+      items: [],
+    }),
+    batchUpdate: stub(tracker, 'forms.batchUpdate', { replies: [] }),
+    responses: {
+      list: stub(tracker, 'forms.responses.list', { responses: [] }),
+    },
+  };
+  return { service: { forms }, tracker };
+}
+
+// ---------------------------------------------------------------------------
 // Bundle all mocks together
 // ---------------------------------------------------------------------------
 export interface AllMocks {
@@ -291,6 +320,7 @@ export interface AllMocks {
   sheets: ReturnType<typeof createSheetsMock>;
   slides: ReturnType<typeof createSlidesMock>;
   calendar: ReturnType<typeof createCalendarMock>;
+  forms: ReturnType<typeof createFormsMock>;
   google: Record<string, (...args: any[]) => any>;
 }
 
@@ -300,6 +330,7 @@ export function createAllMocks(): AllMocks {
   const sheets = createSheetsMock();
   const slides = createSlidesMock();
   const calendar = createCalendarMock();
+  const forms = createFormsMock();
 
   const google: Record<string, (...args: any[]) => any> = {
     drive: () => drive.service,
@@ -307,7 +338,8 @@ export function createAllMocks(): AllMocks {
     sheets: () => sheets.service,
     slides: () => slides.service,
     calendar: () => calendar.service,
+    forms: () => forms.service,
   };
 
-  return { drive, docs, sheets, slides, calendar, google };
+  return { drive, docs, sheets, slides, calendar, forms, google };
 }

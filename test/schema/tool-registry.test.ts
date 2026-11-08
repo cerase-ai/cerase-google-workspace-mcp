@@ -3,7 +3,7 @@ import { describe, it, before, after } from 'node:test';
 import { setupTestServer, type TestContext } from '../helpers/setup-server.js';
 import { TOOL_META } from '../../src/tools/toolMeta.js';
 
-const EXPECTED_TOOL_COUNT = 136;
+const EXPECTED_TOOL_COUNT = 142;
 
 const EXPECTED_TOOLS = [
   'manage_accounts',
@@ -33,6 +33,7 @@ const EXPECTED_TOOLS = [
   'uploadFile', 'downloadFile', 'listPermissions', 'addPermission', 'updatePermission', 'removePermission', 'shareFile', 'getRevisions', 'restoreRevision', 'authGetStatus', 'authListScopes', 'authTestFileAccess',
   'listCalendars', 'getCalendarEvents', 'getCalendarEvent',
   'createCalendarEvent', 'updateCalendarEvent', 'deleteCalendarEvent',
+  'createForm', 'getForm', 'addFormQuestion', 'updateFormQuestion', 'deleteFormQuestion', 'listFormResponses',
   'insertTable', 'editTableCell', 'insertImageFromUrl', 'insertLocalImage',
   'listGoogleDocs', 'getDocumentInfo', 'addDocumentTab', 'renameDocumentTab', 'insertSmartChip', 'readSmartChips', 'createFootnote',
   'convertPdfToGoogleDoc', 'bulkConvertFolderPdfs', 'uploadPdfWithSplit',
