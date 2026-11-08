@@ -395,7 +395,7 @@ export async function handleTool(
     case "listCalendars": {
       const validation = ListCalendarsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 
@@ -429,7 +429,7 @@ export async function handleTool(
     case "getCalendarEvents": {
       const validation = GetCalendarEventsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 
@@ -467,7 +467,7 @@ export async function handleTool(
     case "getCalendarEvent": {
       const validation = GetCalendarEventSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 
@@ -491,7 +491,7 @@ export async function handleTool(
     case "createCalendarEvent": {
       const validation = CreateCalendarEventSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 
@@ -556,7 +556,7 @@ export async function handleTool(
     case "updateCalendarEvent": {
       const validation = UpdateCalendarEventSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 
@@ -600,7 +600,7 @@ export async function handleTool(
     case "deleteCalendarEvent": {
       const validation = DeleteCalendarEventSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const parsed = validation.data;
 

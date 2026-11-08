@@ -38,9 +38,7 @@ Use `npm install` when intentionally changing dependencies and the lockfile.
 | `npm run typecheck` | Run TypeScript without emitting files |
 | `npm run build` | Type-check and bundle the server into `dist/` |
 | `npm run watch` | Rebuild when source files change |
-| `npm run lint` | Run TypeScript checks and ESLint |
 | `npm run lint:types` | Run only TypeScript checks |
-| `npm run lint:eslint` | Run only ESLint |
 | `npm test` | Build the test tree and run all tests |
 | `npm run test:unit` | Run top-level unit tests |
 | `npm run test:integration` | Run integration and schema tests |
@@ -63,7 +61,7 @@ New or changed tools should update schema/registry coverage as well as focused b
 
 1. Fork the repository and create a focused branch.
 2. Make the change with tests and documentation.
-3. Run `npm run lint`, `npm run build`, and `npm test`.
+3. Run `npm run lint:types`, `npm run build`, and `npm test`.
 4. Push the branch and open a pull request.
 
 Report defects and feature requests in [GitHub Issues](https://github.com/piotr-agier/google-drive-mcp/issues).

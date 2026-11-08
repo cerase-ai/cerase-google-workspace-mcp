@@ -45,10 +45,12 @@ function run(args: string[], env: Record<string, string> = {}, until?: RegExp): 
       clearTimeout(deadline);
       resolve({ stdout, stderr, exitCode });
     };
+    // Generous: with the whole suite running in parallel, importing the bundled
+    // server (googleapis, the SDK) can take well over ten seconds under load.
     const deadline = setTimeout(() => {
       child.kill('SIGKILL');
       finish(null);
-    }, 15_000);
+    }, 30_000);
     child.stdout.on('data', (chunk) => {
       stdout += chunk;
     });

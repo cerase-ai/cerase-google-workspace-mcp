@@ -3001,7 +3001,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "createGoogleDoc": {
       const validation = CreateGoogleDocSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3099,7 +3099,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "createDocFromHTML": {
       const validation = CreateDocFromHTMLSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3161,7 +3161,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "updateGoogleDoc": {
       const validation = UpdateGoogleDocSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3278,7 +3278,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "getGoogleDocContent": {
       const validation = GetGoogleDocContentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
       const withFormatting = a.includeFormatting === true;
@@ -3313,7 +3313,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "getGoogleDocContentPaginated": {
       const validation = GetGoogleDocContentPaginatedSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
       const withFormatting = a.includeFormatting === true;
@@ -3358,7 +3358,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "getGoogleDocImage": {
       const validation = GetGoogleDocImageSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3450,7 +3450,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "insertText": {
       const validation = InsertTextSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3570,7 +3570,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "deleteRange": {
       const validation = DeleteRangeSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3698,7 +3698,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "readGoogleDoc": {
       const validation = ReadGoogleDocSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3759,7 +3759,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "readGoogleDocPaginated": {
       const validation = ReadGoogleDocPaginatedSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3813,7 +3813,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "listDocumentTabs": {
       const validation = ListDocumentTabsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3905,7 +3905,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "formatGoogleDocText": {
       const validation = ApplyTextStyleSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -3980,7 +3980,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "formatGoogleDocParagraph": {
       const validation = ApplyParagraphStyleSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4097,7 +4097,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "createParagraphBullets": {
       const validation = CreateParagraphBulletsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4179,7 +4179,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "findAndReplaceInDoc": {
       const validation = FindAndReplaceInDocSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4370,7 +4370,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "listComments": {
       const validation = ListCommentsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4575,7 +4575,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "getComment": {
       const validation = GetCommentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4617,7 +4617,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "addComment": {
       const validation = AddCommentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4716,7 +4716,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "replyToComment": {
       const validation = ReplyToCommentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4745,7 +4745,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "deleteComment": {
       const validation = DeleteCommentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4772,7 +4772,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "insertTable": {
       const validation = InsertTableSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4799,7 +4799,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "editTableCell": {
       const validation = EditTableCellSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4941,7 +4941,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "styleDocTable": {
       const validation = StyleDocTableSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4969,7 +4969,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "insertImageFromUrl": {
       const validation = InsertImageFromUrlSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -4984,7 +4984,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "insertLocalImage": {
       const validation = InsertLocalImageSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -5026,7 +5026,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "listGoogleDocs": {
       const validation = ListGoogleDocsSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -5074,7 +5074,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
     case "getDocumentInfo": {
       const validation = GetDocumentInfoSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -5147,7 +5147,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "getGoogleDocStyleSummary": {
       const validation = GetGoogleDocStyleSummarySchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
@@ -5174,7 +5174,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "describeGoogleDocRange": {
       const validation = DescribeGoogleDocRangeSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
@@ -5219,7 +5219,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "addDocumentTab": {
       const validation = AddDocumentTabSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
@@ -5239,7 +5239,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "renameDocumentTab": {
       const validation = RenameDocumentTabSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
@@ -5261,7 +5261,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "insertSmartChip": {
       const validation = InsertSmartChipSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       // tabId passed through unvalidated by design (see insertTable): no GET on
@@ -5291,7 +5291,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "readSmartChips": {
       const validation = ReadSmartChipsSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
@@ -5315,7 +5315,7 @@ export async function handleTool(toolName: string, args: Record<string, unknown>
 
     case "createFootnote": {
       const validation = CreateFootnoteSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });

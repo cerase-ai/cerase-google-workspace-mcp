@@ -783,7 +783,7 @@ export async function handleTool(
     case "createGoogleSlides": {
       const validation = CreateGoogleSlidesSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -887,7 +887,7 @@ export async function handleTool(
     case "updateGoogleSlides": {
       const validation = UpdateGoogleSlidesSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1079,7 +1079,7 @@ export async function handleTool(
     case "getGoogleSlidesContent": {
       const validation = GetGoogleSlidesContentSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1144,7 +1144,7 @@ export async function handleTool(
     case "formatGoogleSlidesText": {
       const validation = FormatGoogleSlidesTextSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1240,7 +1240,7 @@ export async function handleTool(
     case "formatGoogleSlidesParagraph": {
       const validation = FormatGoogleSlidesParagraphSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1314,7 +1314,7 @@ export async function handleTool(
     case "styleGoogleSlidesShape": {
       const validation = StyleGoogleSlidesShapeSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1405,7 +1405,7 @@ export async function handleTool(
     case "setGoogleSlidesBackground": {
       const validation = SetGoogleSlidesBackgroundSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1450,7 +1450,7 @@ export async function handleTool(
     case "createGoogleSlidesTextBox": {
       const validation = CreateGoogleSlidesTextBoxSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1541,7 +1541,7 @@ export async function handleTool(
     case "createGoogleSlidesShape": {
       const validation = CreateGoogleSlidesShapeSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1614,7 +1614,7 @@ export async function handleTool(
     case "getGoogleSlidesSpeakerNotes": {
       const validation = GetGoogleSlidesSpeakerNotesSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1695,7 +1695,7 @@ export async function handleTool(
     case "updateGoogleSlidesSpeakerNotes": {
       const validation = UpdateGoogleSlidesSpeakerNotesSchema.safeParse(args);
       if (!validation.success) {
-        return errorResponse(validation.error.errors[0].message);
+        return errorResponse(validation.error.issues[0].message);
       }
       const a = validation.data;
 
@@ -1761,7 +1761,7 @@ export async function handleTool(
 
     case "deleteGoogleSlide": {
       const validation = DeleteGoogleSlideSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -1785,7 +1785,7 @@ export async function handleTool(
 
     case "duplicateSlide": {
       const validation = DuplicateSlideSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -1810,7 +1810,7 @@ export async function handleTool(
 
     case "reorderSlides": {
       const validation = ReorderSlidesSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -1839,7 +1839,7 @@ export async function handleTool(
 
     case "replaceAllTextInSlides": {
       const validation = ReplaceAllTextInSlidesSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -1922,7 +1922,7 @@ export async function handleTool(
 
     case "exportSlideThumbnail": {
       const validation = ExportSlideThumbnailSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -1949,7 +1949,7 @@ export async function handleTool(
 
     case "getSlideElementInfo": {
       const validation = GetSlideElementInfoSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2025,7 +2025,7 @@ export async function handleTool(
 
     case "moveSlideElement": {
       const validation = MoveSlideElementSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2106,7 +2106,7 @@ export async function handleTool(
 
     case "deleteSlideElement": {
       const validation = DeleteSlideElementSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2130,14 +2130,14 @@ export async function handleTool(
 
     case "insertSlidesImageFromUrl": {
       const validation = InsertSlidesImageFromUrlSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
       return insertImageIntoSlide(ctx, a.presentationId, a.pageObjectId, a.imageUrl, a.x, a.y, a.width, a.height);
     }
 
     case "insertSlidesLocalImage": {
       const validation = InsertSlidesLocalImageSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       // Upload briefly as public so the Slides API can fetch the bytes.
@@ -2165,7 +2165,7 @@ export async function handleTool(
 
     case "setSlideVisibility": {
       const validation = SetSlideVisibilitySchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2195,7 +2195,7 @@ export async function handleTool(
 
     case "replaceSlideImage": {
       const validation = ReplaceSlideImageSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2242,7 +2242,7 @@ export async function handleTool(
 
     case "setElementZOrder": {
       const validation = SetElementZOrderSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
@@ -2271,7 +2271,7 @@ export async function handleTool(
 
     case "setElementText": {
       const validation = SetElementTextSchema.safeParse(args);
-      if (!validation.success) return errorResponse(validation.error.errors[0].message);
+      if (!validation.success) return errorResponse(validation.error.issues[0].message);
       const a = validation.data;
 
       const slidesService = ctx.google.slides({ version: 'v1', auth: ctx.authClient });
