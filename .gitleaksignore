@@ -1,0 +1,7 @@
+# Findings acknowledged by fingerprint, one line each: <commit>:<path>:<rule>:<line>.
+# A fingerprint pins one finding in one commit, so the same pattern in another
+# commit, file or line is still reported.
+
+# Upstream's test of a malformed service-account file writes a placeholder key
+# whose body is the words "super-secret-key-material"; it is not a key.
+d36b711ab7f2fa4b8a7e3b1082b56ecc3ec9c1d4:test/external-auth.test.ts:private-key:386
