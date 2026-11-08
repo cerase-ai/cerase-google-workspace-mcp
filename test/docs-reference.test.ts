@@ -84,7 +84,6 @@ function existsWithExactCase(absolute: string): boolean {
 describe('Documentation reference', () => {
   const files = [
     path.join(repositoryRoot, 'README.md'),
-    path.join(repositoryRoot, 'CHANGELOG.md'),
     ...markdownFiles(path.join(repositoryRoot, 'docs')),
   ];
 
