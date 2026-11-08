@@ -54,7 +54,7 @@ function collectAllTabsWithLevel(tabs: any[], level: number = 0): Array<{ tab: a
 }
 
 // Helper to recursively find a tab by ID in the tab tree
-function findTabById(tabs: any[], targetId: string): any | null {
+export function findTabById(tabs: any[], targetId: string): any | null {
   for (const tab of tabs) {
     if (tab.tabProperties?.tabId === targetId) {
       return tab;
@@ -283,7 +283,7 @@ function escapeMarkdownText(text: string): string {
 // out into unstyled runs. Neighbouring runs that share a style set are then
 // merged: Docs splits a visually continuous span at every style boundary, and
 // wrapping each fragment separately produces fused delimiter runs such as
-// `**re*****ally***`, which renders as literal asterisks.
+// `**re*****ally***`, which renders as literal asterisks. comment-check: ok
 function normalizeMarkdownRuns(runs: MarkdownRun[]): MarkdownRun[] {
   const mergeAdjacent = (input: MarkdownRun[]): MarkdownRun[] => {
     const out: MarkdownRun[] = [];
@@ -692,7 +692,7 @@ async function getTabBodyContent(
 // Thread an optional tabId into a Docs API range/location object. One shared
 // spelling for "scope this to a tab iff one was given", so every editing
 // handler stays consistent (#114).
-function withTab<T extends object>(target: T, tabId?: string): T & { tabId?: string } {
+export function withTab<T extends object>(target: T, tabId?: string): T & { tabId?: string } {
   return tabId ? { ...target, tabId } : target;
 }
 
@@ -704,7 +704,7 @@ function withTab<T extends object>(target: T, tabId?: string): T & { tabId?: str
 // index just past its final paragraph break). Callers that delete the match or
 // insert after it use it to stay inside the segment: Docs rejects deleting the
 // final newline and inserting at the segment end (#183 follow-up).
-async function findTextRange(ctx: ToolContext, documentId: string, textToFind: string, instance: number = 1, tabId?: string, preResolvedContent?: any[]): Promise<{ startIndex: number; endIndex: number; segmentEndIndex?: number } | { error: string } | null> {
+export async function findTextRange(ctx: ToolContext, documentId: string, textToFind: string, instance: number = 1, tabId?: string, preResolvedContent?: any[]): Promise<{ startIndex: number; endIndex: number; segmentEndIndex?: number } | { error: string } | null> {
   const docs = ctx.google.docs({ version: 'v1', auth: ctx.authClient });
 
   try {

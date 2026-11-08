@@ -8,6 +8,7 @@ import { toolDefinitions as docsTools } from '../src/tools/docs.js';
 import { toolDefinitions as driveTools } from '../src/tools/drive.js';
 import { toolDefinitions as sheetsTools } from '../src/tools/sheets.js';
 import { toolDefinitions as slidesTools } from '../src/tools/slides.js';
+import { toolDefinitions as suggestionsTools } from '../src/tools/suggestions.js';
 
 const repositoryRoot = process.cwd();
 
@@ -171,7 +172,7 @@ describe('Documentation reference', () => {
   // produces a caller-facing bug -- a documented name the schema doesn't have
   // -- not the reverse (schema parameters the docs omit).
   it('never claims a parameter that is not in the tool\'s schema', () => {
-    const allTools = [...docsTools, ...sheetsTools, ...slidesTools, ...driveTools, ...calendarTools];
+    const allTools = [...docsTools, ...sheetsTools, ...slidesTools, ...driveTools, ...calendarTools, ...suggestionsTools];
     const schemaByName = new Map(
       allTools.map((tool) => [
         tool.name,
@@ -327,7 +328,7 @@ describe('Documentation reference', () => {
       return into;
     }
 
-    const allTools = [...docsTools, ...sheetsTools, ...slidesTools, ...driveTools, ...calendarTools];
+    const allTools = [...docsTools, ...sheetsTools, ...slidesTools, ...driveTools, ...calendarTools, ...suggestionsTools];
     const registered = new Set(Object.keys(TOOL_META));
     const failures: string[] = [];
 

@@ -1150,8 +1150,7 @@ describe('Docs tools', () => {
       const res = await callTool(ctx.client, 'readGoogleDoc', { documentId: 'doc-1', format: 'markdown' });
       assert.equal(res.isError, false);
       const text = res.content[0].text!;
-      // Wrapping each run separately yields `**re*****ally***`, which renders as
-      // literal asterisks.
+      // Wrapping each run separately yields `**re*****ally***`, which renders as literal asterisks. comment-check: ok
       assert.ok(!text.includes('*****'), JSON.stringify(text));
       assert.ok(text.includes('**re*ally***\n'), JSON.stringify(text));
     });

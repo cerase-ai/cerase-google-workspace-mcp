@@ -55,6 +55,7 @@ import { describeErrorForLog } from './auth/utils.js';
 
 import * as driveTools from './tools/drive.js';
 import * as docsTools from './tools/docs.js';
+import * as suggestionsTools from './tools/suggestions.js';
 import * as sheetsTools from './tools/sheets.js';
 import * as slidesTools from './tools/slides.js';
 import * as calendarTools from './tools/calendar.js';
@@ -470,7 +471,7 @@ async function checkFileExists(name: string, parentFolderId: string = 'root', dr
 // -----------------------------------------------------------------------------
 // DOMAIN MODULES
 // -----------------------------------------------------------------------------
-const domainModules = [driveTools, docsTools, sheetsTools, slidesTools, calendarTools];
+const domainModules = [driveTools, docsTools, suggestionsTools, sheetsTools, slidesTools, calendarTools];
 
 // -----------------------------------------------------------------------------
 // Per-tool `account` parameter plumbing

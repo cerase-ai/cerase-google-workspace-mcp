@@ -1,0 +1,158 @@
+{
+  "documentId": "doc-suggestions",
+  "title": "Two tabs",
+  "revisionId": "ALm37BXsJ0kQm5nT7vW2",
+  "body": {
+    "content": [
+      {
+        "startIndex": 0,
+        "endIndex": 11,
+        "paragraph": {
+          "elements": [
+            {
+              "startIndex": 1,
+              "endIndex": 11,
+              "textRun": {
+                "content": "First tab\n"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comments": [
+    {
+      "commentId": "comment.tab.one",
+      "anchorId": "anchor-tab-1",
+      "plainTextQuote": "First tab",
+      "status": "OPEN",
+      "headPost": {
+        "postId": "post.tab.one",
+        "content": "Comment in the first tab.",
+        "author": {
+          "displayName": "Reviewer One"
+        }
+      },
+      "replies": []
+    },
+    {
+      "commentId": "comment.tab.two",
+      "anchorId": "anchor-tab-2",
+      "plainTextQuote": "Second tab",
+      "status": "OPEN",
+      "headPost": {
+        "postId": "post.tab.two",
+        "content": "Comment in the second tab.",
+        "author": {
+          "displayName": "Reviewer Two"
+        }
+      },
+      "replies": []
+    }
+  ],
+  "suggestions": [
+    {
+      "suggestionId": "suggest.k3bq9x1",
+      "status": "OPEN",
+      "summaryText": "Insert \"1200\"",
+      "headPost": {
+        "postId": "post.7c8d9",
+        "content": "Change the total to 1200.",
+        "author": {
+          "displayName": "Reviewer One"
+        }
+      },
+      "replies": []
+    },
+    {
+      "suggestionId": "suggest.m7tw2p4",
+      "status": "OPEN",
+      "summaryText": "Delete \"old total\"",
+      "headPost": {
+        "postId": "post.4f8a1",
+        "content": "Remove the old total.",
+        "author": {
+          "displayName": "Reviewer Two"
+        }
+      },
+      "replies": []
+    }
+  ],
+  "tabs": [
+    {
+      "tabProperties": {
+        "tabId": "tab-1",
+        "title": "First"
+      },
+      "documentTab": {
+        "commentAnchors": {
+          "anchor-tab-1": {
+            "ranges": [
+              {
+                "startIndex": 1,
+                "endIndex": 10
+              }
+            ]
+          }
+        },
+        "body": {
+          "content": [
+            {
+              "startIndex": 0,
+              "endIndex": 11,
+              "paragraph": {
+                "elements": [
+                  {
+                    "startIndex": 1,
+                    "endIndex": 11,
+                    "textRun": {
+                      "content": "First tab\n"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "tabProperties": {
+        "tabId": "tab-2",
+        "title": "Second"
+      },
+      "documentTab": {
+        "commentAnchors": {
+          "anchor-tab-2": {
+            "ranges": [
+              {
+                "startIndex": 1,
+                "endIndex": 11
+              }
+            ]
+          }
+        },
+        "body": {
+          "content": [
+            {
+              "startIndex": 0,
+              "endIndex": 12,
+              "paragraph": {
+                "elements": [
+                  {
+                    "startIndex": 1,
+                    "endIndex": 12,
+                    "textRun": {
+                      "content": "Second tab\n"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

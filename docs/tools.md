@@ -1,6 +1,6 @@
 # Tool reference
 
-This server exposes 130 MCP tools across Google Drive, Docs, Sheets, Slides, and Calendar. Tool availability can depend on the granted OAuth scopes. Unless noted otherwise, every tool also accepts the optional top-level `account` parameter described in [Authentication](authentication.md#per-tool-account-selection).
+This server exposes 136 MCP tools across Google Drive, Docs, Sheets, Slides, and Calendar. Tool availability can depend on the granted OAuth scopes. Unless noted otherwise, every tool also accepts the optional top-level `account` parameter described in [Authentication](authentication.md#per-tool-account-selection).
 
 ## Available Tools
 
@@ -401,6 +401,39 @@ different identifiers; neither is accepted as a lock.
 - **deleteComment** - Delete a comment from the document
   - `documentId`: Document ID
   - `commentId`: Comment ID to delete
+
+#### Suggestions and Docs API Comments
+- **suggestInsertText** - Insert text as a suggestion. The visible text stays unchanged until the document's owner accepts the suggestion. Prefer `textToFind`: the tool then reads the document with suggestions inline, while the indexes of an earlier read may differ when the document holds suggestions.
+  - `documentId`: Document ID
+  - `text`: Text to suggest inserting
+  - Target (use one): `index` (1-based position) OR `textToFind`+`matchInstance` with `position` (`before`/`after`, default `after`; exact, case-sensitive match)
+  - `tabId`: Tab ID for multi-tab documents (optional)
+
+- **suggestDeleteText** - Delete a range as a suggestion. The visible text stays unchanged until the document's owner accepts the suggestion. Prefer `textToFind`: the tool then reads the document with suggestions inline, while the indexes of an earlier read may differ when the document holds suggestions.
+  - `documentId`: Document ID
+  - Target (use one): `startIndex` (1-based, inclusive) + `endIndex` (exclusive) OR `textToFind`+`matchInstance` (exact, case-sensitive match)
+  - `tabId`: Tab ID for multi-tab documents (optional)
+
+- **suggestReplaceText** - Replace a range as a suggestion, inserting the new text and deleting the old range in one batch. The visible text stays unchanged until the document's owner accepts the suggestion. Prefer `textToFind`: the tool then reads the document with suggestions inline, while the indexes of an earlier read may differ when the document holds suggestions.
+  - `documentId`: Document ID
+  - `text`: Replacement text to suggest
+  - Target (use one): `startIndex` (1-based, inclusive) + `endIndex` (exclusive) OR `textToFind`+`matchInstance` (exact, case-sensitive match)
+  - `tabId`: Tab ID for multi-tab documents (optional)
+
+- **commentOnText** - Create an anchored comment on a text range through the Docs API. The comment records the quoted passage; the tool sets no assignee.
+  - `documentId`: Document ID
+  - `commentText`: The comment content, at most 2048 characters
+  - Target (use one): `startIndex` (1-based, inclusive) + `endIndex` (exclusive) OR `textToFind`+`matchInstance` (exact, case-sensitive match)
+  - `tabId`: Tab ID for multi-tab documents (optional)
+
+- **replyToDocComment** - Reply to an existing comment or suggestion thread through the Docs API
+  - `documentId`: Document ID
+  - `replyText`: The reply content, at most 2048 characters
+  - Target (use one): `commentId` OR `suggestionId`
+
+- **listDocCommentsAndSuggestions** - List every comment thread (id, status, quoted text, and each post's author and content) and every suggestion thread (id, status, and summary) in a document. This is a read: it creates, edits, accepts or rejects nothing.
+  - `documentId`: Document ID
+  - `tabId`: Tab ID to scope comment threads to (optional; from `listDocumentTabs`). Suggestion threads are document-wide and are always listed.
 
 ### Google Sheets
 

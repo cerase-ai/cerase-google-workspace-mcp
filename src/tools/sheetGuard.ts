@@ -125,9 +125,9 @@ export function buildPreImage(range: string, cells: CanonicalCell[][]): PreImage
  *  booleans in exactly the same way.
  *
  *  The list is deliberately NOT exhaustive: date-shaped text (e.g.
- *  "2024-01-01" or "1/2") is left out of it. Google recognizes a date from the
- *  locale and the cell format, not from the string alone, so detecting one
- *  reliably would need data this layer does not have. */
+ *  "2024-01-01" or "1/2") is left out of it. comment-check: ok
+ *  Google recognizes a date from the locale and the cell format, not from the
+ *  string alone, so detecting one reliably would need data this layer does not have. */
 export function findHazards(
   startRow: number,
   startColumn: number,

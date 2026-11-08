@@ -815,6 +815,30 @@ describe('Docs suggestions and Docs API comments', () => {
         assert.equal(read.args[0]?.suggestionsViewMode, 'SUGGESTIONS_INLINE');
       }
     });
+
+    it('lists only comment threads anchored in the requested tab, plus every suggestion', async () => {
+      installDoc(fixture('doc-comments-two-tabs.json'));
+
+      const res = await callTool(ctx.client, 'listDocCommentsAndSuggestions', {
+        documentId: 'doc-suggestions',
+        tabId: 'tab-2',
+      });
+
+      const text = res.content?.[0]?.text ?? '';
+      assert.equal(res.isError, false, text);
+      assert.ok(text.includes('comment.tab.two'), `answer names the second tab's comment: ${text}`);
+      assert.ok(!text.includes('comment.tab.one'), `answer omits the first tab's comment: ${text}`);
+      for (const id of [SUGGESTION_ONE, SUGGESTION_TWO]) {
+        assert.ok(text.includes(id), `answer names suggestion ${id}: ${text}`);
+      }
+      assert.match(text, /whole document/i);
+
+      const reads = getCalls();
+      assert.equal(reads.length, 1);
+      assert.equal(reads[0]!.args[0]?.includeTabsContent, true);
+      assert.equal(reads[0]!.args[0]?.commentsViewMode, 'COMMENTS_VIEW_MODE_INCLUDED');
+      assert.equal(reads[0]!.args[0]?.suggestionsViewMode, 'SUGGESTIONS_INLINE');
+    });
   });
 
   // -------------------------------------------------------------------------
