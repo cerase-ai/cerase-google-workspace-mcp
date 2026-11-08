@@ -1,0 +1,24 @@
+{
+  "documentId": "doc-suggestions",
+  "replies": [
+    {
+      "insertComment": {
+        "commentThread": {
+          "commentId": "AAAB2cX9f3kQm5",
+          "anchorId": "kix.7b2n4v8q",
+          "plainTextQuote": "Budget Q3",
+          "status": "OPEN",
+          "headPost": {
+            "postId": "post.9d1c2",
+            "content": "Why this budget?",
+            "author": {
+              "displayName": "Reviewer One"
+            }
+          },
+          "replies": []
+        }
+      }
+    }
+  ],
+  "commentUpdateState": "ALL_SAVED"
+}

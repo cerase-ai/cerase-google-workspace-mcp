@@ -1,0 +1,20 @@
+{
+  "documentId": "doc-suggestions",
+  "replies": [],
+  "suggestionResponses": [
+    {
+      "createdSuggestionIds": [
+        "suggest.k3bq9x1"
+      ]
+    },
+    {
+      "createdSuggestionIds": [
+        "suggest.m7tw2p4"
+      ]
+    }
+  ],
+  "commentUpdateState": "NO_UPDATES_REQUESTED",
+  "writeControl": {
+    "requiredRevisionId": "ALm37BXsJ0kQm5nT7vW2"
+  }
+}

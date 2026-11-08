@@ -1,0 +1,117 @@
+{
+  "documentId": "doc-suggestions",
+  "title": "Budget Q3",
+  "revisionId": "ALm37BXsJ0kQm5nT7vW2",
+  "body": {
+    "content": [
+      {
+        "startIndex": 0,
+        "endIndex": 11,
+        "paragraph": {
+          "elements": [
+            {
+              "startIndex": 1,
+              "endIndex": 11,
+              "textRun": {
+                "content": "Budget Q3\n"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "startIndex": 11,
+        "endIndex": 34,
+        "paragraph": {
+          "elements": [
+            {
+              "startIndex": 11,
+              "endIndex": 23,
+              "textRun": {
+                "content": "Il totale è "
+              }
+            },
+            {
+              "startIndex": 23,
+              "endIndex": 27,
+              "textRun": {
+                "content": "1200",
+                "suggestedInsertionIds": [
+                  "suggest.k3bq9x1"
+                ]
+              }
+            },
+            {
+              "startIndex": 27,
+              "endIndex": 34,
+              "textRun": {
+                "content": " euro.\n"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "tabs": [
+    {
+      "tabProperties": {
+        "tabId": "tab-1",
+        "title": "Budget"
+      },
+      "documentTab": {
+        "body": {
+          "content": [
+            {
+              "startIndex": 0,
+              "endIndex": 11,
+              "paragraph": {
+                "elements": [
+                  {
+                    "startIndex": 1,
+                    "endIndex": 11,
+                    "textRun": {
+                      "content": "Budget Q3\n"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "startIndex": 11,
+              "endIndex": 34,
+              "paragraph": {
+                "elements": [
+                  {
+                    "startIndex": 11,
+                    "endIndex": 23,
+                    "textRun": {
+                      "content": "Il totale è "
+                    }
+                  },
+                  {
+                    "startIndex": 23,
+                    "endIndex": 27,
+                    "textRun": {
+                      "content": "1200",
+                      "suggestedInsertionIds": [
+                        "suggest.k3bq9x1"
+                      ]
+                    }
+                  },
+                  {
+                    "startIndex": 27,
+                    "endIndex": 34,
+                    "textRun": {
+                      "content": " euro.\n"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

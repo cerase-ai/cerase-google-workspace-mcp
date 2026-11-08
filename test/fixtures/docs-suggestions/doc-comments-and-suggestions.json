@@ -1,0 +1,95 @@
+{
+  "documentId": "doc-suggestions",
+  "title": "Budget Q3",
+  "revisionId": "ALm37BXsJ0kQm5nT7vW2",
+  "body": {
+    "content": [
+      {
+        "startIndex": 0,
+        "endIndex": 11,
+        "paragraph": {
+          "elements": [
+            {
+              "startIndex": 1,
+              "endIndex": 11,
+              "textRun": {
+                "content": "Budget Q3\n"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "startIndex": 11,
+        "endIndex": 34,
+        "paragraph": {
+          "elements": [
+            {
+              "startIndex": 11,
+              "endIndex": 23,
+              "textRun": {
+                "content": "Il totale è "
+              }
+            },
+            {
+              "startIndex": 23,
+              "endIndex": 27,
+              "textRun": {
+                "content": "1200",
+                "suggestedInsertionIds": [
+                  "suggest.k3bq9x1"
+                ]
+              }
+            },
+            {
+              "startIndex": 27,
+              "endIndex": 34,
+              "textRun": {
+                "content": " euro.\n"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "comments": [
+    {
+      "commentId": "AAAB2cX9f3kQm5",
+      "anchorId": "kix.7b2n4v8q",
+      "plainTextQuote": "Budget Q3",
+      "status": "OPEN",
+      "headPost": {
+        "postId": "post.9d1c2",
+        "content": "Why is Q3 lower than Q2?",
+        "author": {
+          "displayName": "Reviewer One"
+        }
+      },
+      "replies": [
+        {
+          "postId": "post.1a2b3",
+          "content": "Because the launch slipped.",
+          "author": {
+            "displayName": "Author Two"
+          }
+        }
+      ]
+    }
+  ],
+  "suggestions": [
+    {
+      "suggestionId": "suggest.k3bq9x1",
+      "status": "OPEN",
+      "summaryText": "Insert \"1200\"",
+      "headPost": {
+        "postId": "post.7c8d9",
+        "content": "Change the total to 1200.",
+        "author": {
+          "displayName": "Reviewer One"
+        }
+      },
+      "replies": []
+    }
+  ]
+}

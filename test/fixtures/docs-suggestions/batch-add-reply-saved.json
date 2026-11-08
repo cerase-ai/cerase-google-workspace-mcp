@@ -1,0 +1,17 @@
+{
+  "documentId": "doc-suggestions",
+  "replies": [
+    {
+      "addCommentReply": {
+        "post": {
+          "postId": "post.4f8a1",
+          "content": "Thanks, will check.",
+          "author": {
+            "displayName": "Test User"
+          }
+        }
+      }
+    }
+  ],
+  "commentUpdateState": "ALL_SAVED"
+}
