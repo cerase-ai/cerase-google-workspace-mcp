@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "namespace": "studio.guidance",
+  "name": "google-workspace",
+  "type": "connector",
+  "display_name": "Google Workspace",
+  "description": "Your own Google account's Drive, Calendar, Docs, Sheets and Slides through one connection.",
+  "license": "MIT",
+  "install": {
+    "command": "node /opt/cerase-google-workspace-mcp/dist/index.js"
+  },
+  "auth": {
+    "kind": "oauth2",
+    "provider": "google",
+    "credential_scope": "user",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive",
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/documents",
+      "https://www.googleapis.com/auth/spreadsheets",
+      "https://www.googleapis.com/auth/presentations",
+      "openid",
+      "email"
+    ]
+  },
+  "tool_side_effects": {
+    "default": "workspace_write",
+    "read_only": [
+      "authGetStatus",
+      "authListScopes",
+      "authTestFileAccess",
+      "describeGoogleDocRange",
+      "downloadFile",
+      "exportSlideThumbnail",
+      "getCalendarEvent",
+      "getCalendarEvents",
+      "getComment",
+      "getDocumentInfo",
+      "getGoogleDocContent",
+      "getGoogleDocContentPaginated",
+      "getGoogleDocImage",
+      "getGoogleDocStyleSummary",
+      "getGoogleSheetCells",
+      "getGoogleSheetContent",
+      "getGoogleSlidesContent",
+      "getGoogleSlidesSpeakerNotes",
+      "getRevisions",
+      "getSlideElementInfo",
+      "getSpreadsheetInfo",
+      "listCalendars",
+      "listComments",
+      "listDimensionGroups",
+      "listDocumentTabs",
+      "listFolder",
+      "listGoogleDocs",
+      "listGoogleSheets",
+      "listPermissions",
+      "listSharedDrives",
+      "listSheets",
+      "readGoogleDoc",
+      "readGoogleDocPaginated",
+      "readSmartChips",
+      "readTextFile",
+      "search"
+    ],
+    "backend_write": [
+      "deleteCalendarEvent",
+      "deleteComment",
+      "deleteGoogleSlide",
+      "deleteItem",
+      "deleteRange",
+      "deleteSheet",
+      "deleteSlideElement",
+      "removePermission"
+    ]
+  }
+}

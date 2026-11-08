@@ -1,0 +1,58 @@
+name: ci
+
+# The connector's own checks. cerase-core builds this code into its universal
+# runner image from a byte-identical copy and runs the same tests in that build,
+# so a red here is a red there too.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITLEAKS_VERSION: 8.21.2
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - name: Install
+        run: npm ci --no-audit --no-fund
+      - name: Build and test
+        run: npm test
+      # The copy in cerase-core is scanned by that repo's Dependabot, which must
+      # report nothing open, so an advisory of any severity reds here first.
+      - name: No dependency advisory of any severity
+        run: npm audit --audit-level=low
+
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # The secret scan reads every commit: a secret committed and later
+          # removed is still published.
+          fetch-depth: 0
+      # scripts/docs-parity.sh is cerase-core's, copied here by its
+      # scripts/sync-tooling.sh. The pin is what makes the copy a copy.
+      - name: Vendored tooling matches the sha it recorded
+        run: sha256sum --check scripts/TOOLING.sha256 scripts/TOOLING.seal
+      - name: Docs parity — nothing named that does not exist
+        run: ./scripts/docs-parity.sh
+      - name: Install gitleaks
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 5 --retry-delay 3 --retry-all-errors \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+      - name: Secret scan over the whole history
+        run: gitleaks detect --source . --redact --verbose --no-banner --exit-code 1

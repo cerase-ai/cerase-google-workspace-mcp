@@ -1,15 +1,15 @@
 {
-    "name": "@piotr-agier/google-drive-mcp",
-    "version": "2.13.0",
-    "mcpName": "io.github.piotr-agier/google-drive-mcp",
-    "description": "Secure access to Google Drive, Docs, Sheets, Slides, and Calendar through MCP.",
+    "name": "cerase-google-workspace-mcp",
+    "version": "2.13.0-cerase.1",
+    "private": true,
+    "description": "Google Workspace MCP server, a fork of @piotr-agier/google-drive-mcp 2.13.0",
     "license": "MIT",
     "author": "Piotr Agier <piotr.agier@gmail.com>",
-    "homepage": "https://github.com/piotr-agier/google-drive-mcp#readme",
-    "bugs": "https://github.com/piotr-agier/google-drive-mcp/issues",
+    "homepage": "https://github.com/cerase-ai/cerase-google-workspace-mcp#readme",
+    "bugs": "https://github.com/cerase-ai/cerase-google-workspace-mcp/issues",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/piotr-agier/google-drive-mcp.git"
+        "url": "git+https://github.com/cerase-ai/cerase-google-workspace-mcp.git"
     },
     "keywords": [
         "mcp",
@@ -60,7 +60,7 @@
         "lint:eslint": "eslint src/"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=22.0.0"
     },
     "overrides": {
         "google-auth-library": "$google-auth-library"

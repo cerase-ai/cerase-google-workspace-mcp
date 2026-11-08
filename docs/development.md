@@ -36,7 +36,7 @@ Use `npm install` when intentionally changing dependencies and the lockfile.
 | Command | Purpose |
 |---|---|
 | `npm run typecheck` | Run TypeScript without emitting files |
-| `npm run build` | Type-check and bundle `dist/index.js` |
+| `npm run build` | Type-check and bundle the server into `dist/` |
 | `npm run watch` | Rebuild when source files change |
 | `npm run lint` | Run TypeScript checks and ESLint |
 | `npm run lint:types` | Run only TypeScript checks |
@@ -51,7 +51,7 @@ Use `npm install` when intentionally changing dependencies and the lockfile.
 
 ## Local MCP configuration
 
-Build the project, then point a client at the absolute `dist/index.js` path. See [Local build](clients.md#local-build).
+Build the project, then point a client at the absolute path of the built `index.js` in `dist/`. See [Local build](clients.md#local-build).
 
 ## Tests
 

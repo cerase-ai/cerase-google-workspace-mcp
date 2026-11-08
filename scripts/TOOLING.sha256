@@ -1,0 +1,4 @@
+# Tooling vendored from cerase-core — DO NOT EDIT these files here.
+# Re-sync from cerase-core:  ./scripts/sync-tooling.sh
+# The first divergence between two copies is otherwise silent.
+c72f7f8e73ec93e5a694f077dfb176022876103c9952a0d9324ae5def8e7edcb  scripts/docs-parity.sh

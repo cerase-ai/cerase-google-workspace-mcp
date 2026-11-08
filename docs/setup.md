@@ -1,6 +1,6 @@
 # Setup
 
-This guide covers the Google Cloud project, OAuth credentials, and package installation required before connecting an MCP client. For a condensed path, start with the [README quick start](../README.md#quick-start).
+This guide covers the Google Cloud project, OAuth credentials, and package installation required before connecting an MCP client. For a condensed path, start with the [upstream README quick start](https://github.com/piotr-agier/google-drive-mcp#quick-start).
 
 ## Requirements
 
