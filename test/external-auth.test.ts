@@ -1,0 +1,685 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import {
+  isExternalTokenMode,
+  isServiceAccountMode,
+  validateExternalTokenConfig,
+  createExternalOAuth2Client,
+  buildServiceAccountAuthOptions,
+  validateCredentialsFile,
+  describeBypassedTokens,
+  AUTH_MODE_OVERRIDE_ENV_VARS,
+  getActiveAuthMode,
+  createServiceAccountAuth,
+} from '../src/auth/externalAuth.js';
+import { JWT } from 'google-auth-library';
+import { SCOPE_ALIASES } from '../src/auth/scopes.js';
+import { setEnv, clearAuthModeOverrides } from './helpers/env.js';
+
+// ---------------------------------------------------------------------------
+// Helpers — save & restore env vars around each test
+// ---------------------------------------------------------------------------
+const EXTERNAL_VARS = [
+  'GOOGLE_DRIVE_MCP_ACCESS_TOKEN',
+  'GOOGLE_DRIVE_MCP_REFRESH_TOKEN',
+  'GOOGLE_DRIVE_MCP_CLIENT_ID',
+  'GOOGLE_DRIVE_MCP_CLIENT_SECRET',
+  'GOOGLE_APPLICATION_CREDENTIALS',
+  'GOOGLE_DRIVE_MCP_SUBJECT',
+  'GOOGLE_DRIVE_MCP_SCOPES',
+] as const;
+
+// Wraps a test body: force-clears every EXTERNAL_VAR (so ambient config can't
+// leak in), applies `vars`, and restores everything afterward — built on the
+// shared withEnv primitive so the save/restore logic lives in one place.
+function withEnv(vars: Record<string, string>, fn: () => void | Promise<void>) {
+  return async () => {
+    const cleared: Record<string, string | undefined> = {};
+    for (const v of EXTERNAL_VARS) cleared[v] = undefined;
+    const env = setEnv({ ...cleared, ...vars });
+    try {
+      await fn();
+    } finally {
+      env.restore();
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// isExternalTokenMode
+// ---------------------------------------------------------------------------
+test('isExternalTokenMode returns true when access token is set', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test' },
+  () => { assert.equal(isExternalTokenMode(), true); },
+));
+
+test('isExternalTokenMode returns false when access token is not set', withEnv(
+  {},
+  () => { assert.equal(isExternalTokenMode(), false); },
+));
+
+// ---------------------------------------------------------------------------
+// isServiceAccountMode
+// ---------------------------------------------------------------------------
+test('isServiceAccountMode returns true when GOOGLE_APPLICATION_CREDENTIALS is set', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json' },
+  () => { assert.equal(isServiceAccountMode(), true); },
+));
+
+test('isServiceAccountMode returns false when not set', withEnv(
+  {},
+  () => { assert.equal(isServiceAccountMode(), false); },
+));
+
+// ---------------------------------------------------------------------------
+// buildServiceAccountAuthOptions
+// ---------------------------------------------------------------------------
+test('buildServiceAccountAuthOptions returns keyFile + default scopes when only GOOGLE_APPLICATION_CREDENTIALS is set', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json' },
+  () => {
+    const opts = buildServiceAccountAuthOptions();
+    assert.equal(opts.keyFile, '/tmp/sa-key.json');
+    assert.ok(Array.isArray(opts.scopes), 'scopes should be an array');
+    assert.ok((opts.scopes as string[]).length > 0, 'default scopes should be non-empty');
+    assert.equal(opts.clientOptions, undefined, 'clientOptions must be omitted when no subject is set');
+  },
+));
+
+test('buildServiceAccountAuthOptions sets clientOptions.subject for domain-wide delegation', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json',
+    GOOGLE_DRIVE_MCP_SUBJECT: 'bot@example.com',
+  },
+  () => {
+    const opts = buildServiceAccountAuthOptions();
+    assert.deepEqual(opts.clientOptions, { subject: 'bot@example.com' });
+  },
+));
+
+test('buildServiceAccountAuthOptions trims whitespace around the subject', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json',
+    GOOGLE_DRIVE_MCP_SUBJECT: '  bot@example.com  ',
+  },
+  () => {
+    const opts = buildServiceAccountAuthOptions();
+    assert.deepEqual(opts.clientOptions, { subject: 'bot@example.com' });
+  },
+));
+
+test('buildServiceAccountAuthOptions omits clientOptions when GOOGLE_DRIVE_MCP_SUBJECT is blank', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json',
+    GOOGLE_DRIVE_MCP_SUBJECT: '   ',
+  },
+  () => {
+    const opts = buildServiceAccountAuthOptions();
+    assert.equal(opts.clientOptions, undefined);
+  },
+));
+
+test('buildServiceAccountAuthOptions honors GOOGLE_DRIVE_MCP_SCOPES', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa-key.json',
+    GOOGLE_DRIVE_MCP_SCOPES: 'drive.file,documents',
+  },
+  () => {
+    const opts = buildServiceAccountAuthOptions();
+    assert.deepEqual(opts.scopes, [SCOPE_ALIASES['drive.file'], SCOPE_ALIASES['documents']]);
+  },
+));
+
+// ---------------------------------------------------------------------------
+// validateExternalTokenConfig
+// ---------------------------------------------------------------------------
+test('validates successfully with access token only', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test' },
+  () => { assert.doesNotThrow(() => validateExternalTokenConfig()); },
+));
+
+test('throws on empty access token', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: '  ' },
+  () => {
+    assert.throws(
+      () => validateExternalTokenConfig(),
+      /GOOGLE_DRIVE_MCP_ACCESS_TOKEN is set but empty/,
+    );
+  },
+));
+
+test('throws when refresh token set without client credentials', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh',
+  },
+  () => {
+    assert.throws(
+      () => validateExternalTokenConfig(),
+      /GOOGLE_DRIVE_MCP_CLIENT_ID and\/or.*GOOGLE_DRIVE_MCP_CLIENT_SECRET are missing/,
+    );
+  },
+));
+
+test('throws when only client ID provided without client secret', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'id.apps.googleusercontent.com',
+  },
+  () => {
+    assert.throws(
+      () => validateExternalTokenConfig(),
+      /Both GOOGLE_DRIVE_MCP_CLIENT_ID and GOOGLE_DRIVE_MCP_CLIENT_SECRET must be provided together/,
+    );
+  },
+));
+
+test('validates successfully with full credential set', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'id.apps.googleusercontent.com',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'GOCSPX-secret',
+  },
+  () => { assert.doesNotThrow(() => validateExternalTokenConfig()); },
+));
+
+// ---------------------------------------------------------------------------
+// createExternalOAuth2Client
+// ---------------------------------------------------------------------------
+test('creates OAuth2Client with access token', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test-token' },
+  () => {
+    const client = createExternalOAuth2Client();
+    assert.equal(client.credentials.access_token, 'ya29.test-token');
+    assert.equal(client.credentials.refresh_token, undefined);
+  },
+));
+
+// A supplied access token lives about an hour, but the configuration that
+// carries it lives as long as the deployment — so by the time a process
+// starts, the token it was given is almost always long dead. google-auth-
+// library only refreshes when `expiry_date` says the token is expiring:
+//
+//   isTokenExpiring() { return expiryDate ? expiryDate <= now + threshold : false }
+//
+// With no expiry_date that is false, so the client would hand the dead token
+// to the very first request and let Google reject it. When a refresh token is
+// present we therefore do not seed the access token at all, which makes the
+// library's own `!credentials.access_token || isTokenExpiring()` true and
+// mints a fresh token before the first call.
+test('does not seed a supplied access token when a refresh token can replace it', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test-token',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'test-client-id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'test-client-secret',
+  },
+  () => {
+    const client = createExternalOAuth2Client();
+    assert.equal(client.credentials.refresh_token, '1//refresh-token');
+    assert.equal(
+      client.credentials.access_token,
+      undefined,
+      'a stale access token must not be handed to the first request',
+    );
+  },
+));
+
+test('the client refreshes before its first request when a refresh token is set', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test-token',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'test-client-id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'test-client-secret',
+  },
+  () => {
+    const client = createExternalOAuth2Client();
+    // The library's own decision, asserted through it rather than restated:
+    // getAccessTokenAsync() refreshes when this is true. isTokenExpiring is
+    // private to TypeScript but present at runtime, which is what decides.
+    const isTokenExpiring = (client as unknown as { isTokenExpiring(): boolean })
+      .isTokenExpiring.bind(client);
+    const shouldRefresh = !client.credentials.access_token || isTokenExpiring();
+    assert.equal(shouldRefresh, true, 'the library must consider a refresh due');
+  },
+));
+
+test('keeps the access token when there is no refresh token to replace it', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.only-token' },
+  () => {
+    const client = createExternalOAuth2Client();
+    assert.equal(
+      client.credentials.access_token,
+      'ya29.only-token',
+      'without a refresh token the supplied token is all there is',
+    );
+  },
+));
+
+// ---------------------------------------------------------------------------
+// External mode entered by refresh token alone
+// ---------------------------------------------------------------------------
+
+// Keying the mode off the access token forced a deployment that refreshes to
+// keep a dead access token around purely as a mode flag.
+test('isExternalTokenMode returns true for a refresh token with no access token', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'test-client-id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'test-client-secret',
+  },
+  () => { assert.equal(isExternalTokenMode(), true); },
+));
+
+test('validateExternalTokenConfig accepts a refresh token with no access token', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'test-client-id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'test-client-secret',
+  },
+  () => { assert.doesNotThrow(() => validateExternalTokenConfig()); },
+));
+
+test('createExternalOAuth2Client works with a refresh token and no access token', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'test-client-id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'test-client-secret',
+  },
+  () => {
+    const client = createExternalOAuth2Client();
+    assert.equal(client.credentials.refresh_token, '1//refresh-token');
+    assert.equal(client.credentials.access_token, undefined);
+  },
+));
+
+test('validateExternalTokenConfig still rejects neither token being usable', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: '   ' },
+  () => { assert.throws(() => validateExternalTokenConfig(), /ACCESS_TOKEN|REFRESH_TOKEN/); },
+));
+
+// ---------------------------------------------------------------------------
+// authenticate() integration — priority order
+// ---------------------------------------------------------------------------
+test('authenticate prefers service account over external token', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: '/tmp/nonexistent-sa-key.json',
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test',
+  },
+  async () => {
+    // Service account mode should be chosen, but it will fail because the key
+    // file doesn't exist. The important thing is that it doesn't fall through
+    // to external token mode.
+    const { authenticate } = await import('../src/auth.js');
+    await assert.rejects(
+      () => authenticate(),
+      // GoogleAuth will throw about the missing key file
+      (err: any) => err !== undefined,
+    );
+    // Confirm service account mode was selected (external token mode would succeed)
+    assert.equal(isServiceAccountMode(), true);
+    assert.equal(isExternalTokenMode(), true); // both set, but SA takes priority
+  },
+));
+
+test('authenticate uses external token when no service account', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test',
+  },
+  async () => {
+    const { authenticate } = await import('../src/auth.js');
+    const client = await authenticate();
+    assert.equal(client.credentials.access_token, 'ya29.test');
+  },
+));
+
+// ---------------------------------------------------------------------------
+// describeBypassedTokens — issue #137 remediation advice
+// ---------------------------------------------------------------------------
+
+test('describeBypassedTokens returns null when no local token file exists', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/x/sa.json' },
+  () => {
+    assert.equal(describeBypassedTokens('service_account', '/home/u/tokens.json', false), null);
+  },
+));
+
+test('describeBypassedTokens names only the one set override var', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/x/sa.json' },
+  () => {
+    const msg = describeBypassedTokens('service_account', '/home/u/tokens.json', true);
+    assert.ok(msg);
+    assert.ok(msg!.includes('Unset GOOGLE_APPLICATION_CREDENTIALS to use your authenticated Google account'));
+    assert.ok(!msg!.includes('GOOGLE_DRIVE_MCP_ACCESS_TOKEN'), 'does not mention an unset override var');
+  },
+));
+
+test('describeBypassedTokens tells the user to unset BOTH override vars when both are set (finding #6)', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/x/sa.json', GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.test' },
+  () => {
+    // Unsetting only the winning var just hands control to the other override,
+    // so tokens.json stays bypassed — the remedy must name both.
+    const msg = describeBypassedTokens('service_account', '/home/u/tokens.json', true);
+    assert.ok(msg);
+    assert.ok(
+      msg!.includes('Unset GOOGLE_APPLICATION_CREDENTIALS and GOOGLE_DRIVE_MCP_ACCESS_TOKEN'),
+      'names both override vars in the remedy',
+    );
+  },
+));
+
+// ---------------------------------------------------------------------------
+// validateCredentialsFile
+//
+// google-auth-library v10 stopped rejecting malformed credentials files:
+// getClient() resolves with a credential-less JWT client, so the server would
+// claim "authentication successful" and then fail every call with a misleading
+// "unregistered callers" error. These pin the fail-fast guard that restores v9
+// behavior — and pin that it stays permissive toward non-service-account ADC
+// files, which GOOGLE_APPLICATION_CREDENTIALS may legitimately point at.
+// ---------------------------------------------------------------------------
+
+const PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----\nsuper-secret-key-material\n-----END PRIVATE KEY-----\n';
+
+function writeCredFile(contents: string): string {
+  const dir = mkdtempSync(join(tmpdir(), 'gdrive-mcp-cred-'));
+  const file = join(dir, 'creds.json');
+  writeFileSync(file, contents);
+  return file;
+}
+
+test('validateCredentialsFile accepts a well-formed service account key', () => {
+  const file = writeCredFile(JSON.stringify({
+    type: 'service_account',
+    client_email: 'sa@example.iam.gserviceaccount.com',
+    private_key: PRIVATE_KEY,
+  }));
+  assert.doesNotThrow(() => validateCredentialsFile(file));
+});
+
+test('validateCredentialsFile rejects invalid JSON naming the file', () => {
+  const file = writeCredFile('{ this is not valid json ');
+  assert.throws(() => validateCredentialsFile(file), (err: Error) => {
+    assert.match(err.message, /not valid JSON/);
+    assert.ok(err.message.includes(file), 'error should name the offending file');
+    return true;
+  });
+});
+
+test('validateCredentialsFile rejects a service account key missing its fields', () => {
+  const file = writeCredFile(JSON.stringify({ type: 'service_account' }));
+  assert.throws(() => validateCredentialsFile(file), (err: Error) => {
+    assert.match(err.message, /client_email/);
+    assert.match(err.message, /private_key/);
+    return true;
+  });
+});
+
+test('validateCredentialsFile rejects a bare JSON object with no credential fields', () => {
+  const file = writeCredFile(JSON.stringify({ not: 'a valid sa key' }));
+  assert.throws(() => validateCredentialsFile(file), /missing required field/);
+});
+
+test('validateCredentialsFile rejects a non-object and an unknown type', () => {
+  assert.throws(() => validateCredentialsFile(writeCredFile('["array"]')), /must contain a JSON object/);
+  assert.throws(
+    () => validateCredentialsFile(writeCredFile(JSON.stringify({ type: 'not_a_real_type' }))),
+    /unrecognized type/,
+  );
+});
+
+test('validateCredentialsFile accepts non-service-account ADC credential types', () => {
+  // `gcloud auth application-default login` writes an authorized_user file;
+  // workload identity writes external_account. Neither carries client_email,
+  // and both are valid targets for GOOGLE_APPLICATION_CREDENTIALS.
+  const authorizedUser = writeCredFile(JSON.stringify({
+    type: 'authorized_user',
+    client_id: 'x.apps.googleusercontent.com',
+    client_secret: 'shh',
+    refresh_token: '1//token',
+  }));
+  assert.doesNotThrow(() => validateCredentialsFile(authorizedUser));
+
+  const externalAccount = writeCredFile(JSON.stringify({
+    type: 'external_account',
+    audience: '//iam.googleapis.com/projects/1/locations/global/workloadIdentityPools/p/providers/x',
+    subject_token_type: 'urn:ietf:params:oauth:token-type:jwt',
+    token_url: 'https://sts.googleapis.com/v1/token',
+  }));
+  assert.doesNotThrow(() => validateCredentialsFile(externalAccount));
+});
+
+test('validateCredentialsFile rejects a subject on a credential type that cannot impersonate', () => {
+  // GoogleAuth silently drops `subject` for every non-service-account type, so
+  // the server would run as the file's own identity instead of the subject.
+  const cases: Record<string, object> = {
+    authorized_user: { client_id: 'x.apps.googleusercontent.com', client_secret: 'shh', refresh_token: '1//token' },
+    impersonated_service_account: { service_account_impersonation_url: 'https://example.com', source_credentials: {} },
+    external_account: { audience: '//iam.googleapis.com/x', subject_token_type: 'urn:ietf:params:oauth:token-type:jwt' },
+  };
+  for (const [type, fields] of Object.entries(cases)) {
+    const file = writeCredFile(JSON.stringify({ type, ...fields }));
+    assert.throws(() => validateCredentialsFile(file, 'bot@example.com'), (err: Error) => {
+      assert.match(err.message, /GOOGLE_DRIVE_MCP_SUBJECT is set/);
+      assert.ok(err.message.includes(`type "${type}"`), `error should name ${type}`);
+      assert.ok(err.message.includes(file), 'error should name the file');
+      return true;
+    });
+    // Without a subject the same file is still a valid ADC target.
+    assert.doesNotThrow(() => validateCredentialsFile(file));
+  }
+});
+
+test('validateCredentialsFile accepts a subject on a service account key, typed or not', () => {
+  const typed = writeCredFile(JSON.stringify({
+    type: 'service_account',
+    client_email: 'sa@example.iam.gserviceaccount.com',
+    private_key: PRIVATE_KEY,
+  }));
+  assert.doesNotThrow(() => validateCredentialsFile(typed, 'bot@example.com'));
+
+  const untyped = writeCredFile(JSON.stringify({
+    client_email: 'sa@example.iam.gserviceaccount.com',
+    private_key: PRIVATE_KEY,
+  }));
+  assert.doesNotThrow(() => validateCredentialsFile(untyped, 'bot@example.com'));
+});
+
+test('createServiceAccountAuth refuses GOOGLE_DRIVE_MCP_SUBJECT with an authorized_user file', withEnv(
+  {
+    GOOGLE_APPLICATION_CREDENTIALS: writeCredFile(JSON.stringify({
+      type: 'authorized_user',
+      client_id: 'x.apps.googleusercontent.com',
+      client_secret: 'shh',
+      refresh_token: '1//token',
+    })),
+    GOOGLE_DRIVE_MCP_SUBJECT: 'bot@example.com',
+  },
+  async () => {
+    await assert.rejects(createServiceAccountAuth(), /type "authorized_user"/);
+  },
+));
+
+test('validateCredentialsFile never echoes key material into the error', () => {
+  // The file holds a private key; a validation error must not leak it.
+  const file = writeCredFile(JSON.stringify({ type: 'service_account', private_key: PRIVATE_KEY }));
+  assert.throws(() => validateCredentialsFile(file), (err: Error) => {
+    assert.ok(!err.message.includes('super-secret-key-material'), 'key material leaked into error');
+    return true;
+  });
+});
+
+test('validateCredentialsFile lets a missing file surface as ENOENT', () => {
+  assert.throws(
+    () => validateCredentialsFile(join(tmpdir(), 'gdrive-mcp-definitely-missing.json')),
+    /ENOENT/,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// createServiceAccountAuth: domain-wide delegation subject
+//
+// #214 reported that on google-auth-library 9.15, GoogleAuth given
+// { keyFile, clientOptions: { subject } } produced a client that did not
+// impersonate. The buildServiceAccountAuthOptions tests above only pin the
+// options shape; these pin that the subject survives GoogleAuth all the way
+// onto the JWT client, which is what puts it in the token request's `sub`
+// claim. Offline: getClient() only parses the key file, it never signs.
+// ---------------------------------------------------------------------------
+
+function writeServiceAccountKey(): string {
+  return writeCredFile(JSON.stringify({
+    type: 'service_account',
+    client_email: 'sa@example.iam.gserviceaccount.com',
+    private_key: PRIVATE_KEY,
+  }));
+}
+
+test('createServiceAccountAuth hands GOOGLE_DRIVE_MCP_SUBJECT to the JWT client', async () => {
+  const keyFile = writeServiceAccountKey();
+  await withEnv(
+    { GOOGLE_APPLICATION_CREDENTIALS: keyFile, GOOGLE_DRIVE_MCP_SUBJECT: 'bot@example.com' },
+    async () => {
+      const client = await createServiceAccountAuth();
+      assert.ok(client instanceof JWT, 'a service account key must yield a JWT client');
+      assert.equal(client.subject, 'bot@example.com');
+      assert.equal(client.email, 'sa@example.iam.gserviceaccount.com');
+      assert.deepEqual(client.scopes, buildServiceAccountAuthOptions().scopes);
+    },
+  )();
+});
+
+test('createServiceAccountAuth leaves the JWT subject unset without GOOGLE_DRIVE_MCP_SUBJECT', async () => {
+  const keyFile = writeServiceAccountKey();
+  await withEnv({ GOOGLE_APPLICATION_CREDENTIALS: keyFile }, async () => {
+    const client = await createServiceAccountAuth();
+    assert.ok(client instanceof JWT);
+    assert.equal(client.subject, undefined);
+  })();
+});
+
+// ---------------------------------------------------------------------------
+// Messages must name the variable that is actually in force
+// ---------------------------------------------------------------------------
+
+// External-token mode can be activated by either variable, so advice that
+// names only the access token is unactionable for a deployment that sets just
+// the refresh token: unset it and the mode is still on.
+
+test('the bypass warning names the refresh token when that is what forces the mode', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'secret',
+  },
+  () => {
+    const msg = describeBypassedTokens('external_token', '/tmp/tokens.json', true);
+    assert.ok(msg, 'a bypass warning is expected when tokens.json exists');
+    assert.match(msg!, /GOOGLE_DRIVE_MCP_REFRESH_TOKEN/);
+    assert.doesNotMatch(
+      msg!,
+      /Unset GOOGLE_DRIVE_MCP_ACCESS_TOKEN to/,
+      'must not tell the user to unset a variable that is not set',
+    );
+  },
+));
+
+test('the bypass warning lists both token variables when both are set', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.token',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'secret',
+  },
+  () => {
+    const msg = describeBypassedTokens('external_token', '/tmp/tokens.json', true);
+    assert.ok(msg);
+    assert.match(msg!, /GOOGLE_DRIVE_MCP_ACCESS_TOKEN/);
+    assert.match(msg!, /GOOGLE_DRIVE_MCP_REFRESH_TOKEN/);
+  },
+));
+
+// Checking the map against a list copied out of it only proves the two were
+// edited together. Check it against behaviour instead: every variable the map
+// claims forces a mode must actually force that mode on its own. (A variable
+// missing from the map still cannot be found this way — nothing here knows it
+// exists — but every listed one is proven to do what the map says.)
+test('every variable the map lists forces the mode it is listed under', () => {
+  for (const [mode, vars] of Object.entries(AUTH_MODE_OVERRIDE_ENV_VARS)) {
+    for (const name of vars) {
+      const restore = clearAuthModeOverrides({ [name]: 'set-by-the-test' });
+      try {
+        assert.equal(
+          getActiveAuthMode(),
+          mode,
+          `${name} alone should select ${mode}`,
+        );
+      } finally {
+        restore.restore();
+      }
+    }
+  }
+});
+
+test('with nothing set, the mode is local OAuth', () => {
+  const restore = clearAuthModeOverrides();
+  try {
+    assert.equal(getActiveAuthMode(), 'oauth');
+  } finally {
+    restore.restore();
+  }
+});
+
+
+// A variable that is set but empty should be named as the one at fault. Either
+// can enter the mode now, so a fixed name is wrong half the time.
+test('an empty refresh token is reported as the refresh token, not the access token', withEnv(
+  { GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '  ' },
+  () => {
+    assert.throws(
+      () => validateExternalTokenConfig(),
+      (e: Error) => {
+        assert.match(e.message, /GOOGLE_DRIVE_MCP_REFRESH_TOKEN is set but empty/);
+        assert.doesNotMatch(
+          e.message,
+          /GOOGLE_DRIVE_MCP_ACCESS_TOKEN is set but empty/,
+          'must not blame a variable that is not set',
+        );
+        return true;
+      },
+    );
+  },
+));
+
+test('an empty access token is still reported as the access token', withEnv(
+  { GOOGLE_DRIVE_MCP_ACCESS_TOKEN: '   ' },
+  () => {
+    assert.throws(() => validateExternalTokenConfig(), /GOOGLE_DRIVE_MCP_ACCESS_TOKEN is set but empty/);
+  },
+));
+
+test('the bypass warning agrees in number when two variables are set', withEnv(
+  {
+    GOOGLE_DRIVE_MCP_ACCESS_TOKEN: 'ya29.token',
+    GOOGLE_DRIVE_MCP_REFRESH_TOKEN: '1//refresh-token',
+    GOOGLE_DRIVE_MCP_CLIENT_ID: 'id',
+    GOOGLE_DRIVE_MCP_CLIENT_SECRET: 'secret',
+  },
+  () => {
+    const msg = describeBypassedTokens('external_token', '/tmp/tokens.json', true)!;
+    assert.match(msg, /GOOGLE_DRIVE_MCP_ACCESS_TOKEN and GOOGLE_DRIVE_MCP_REFRESH_TOKEN are set/);
+    assert.doesNotMatch(msg, /and GOOGLE_DRIVE_MCP_REFRESH_TOKEN is set/);
+  },
+));
+
+test('the bypass warning stays singular for one variable', withEnv(
+  { GOOGLE_APPLICATION_CREDENTIALS: '/tmp/sa.json' },
+  () => {
+    const msg = describeBypassedTokens('service_account', '/tmp/tokens.json', true)!;
+    assert.match(msg, /GOOGLE_APPLICATION_CREDENTIALS is set/);
+  },
+));
